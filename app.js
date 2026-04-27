@@ -13,8 +13,20 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// ─── PINS (GLOBAL SYNC) ───────────────────────────────────
+let SITE_PIN = 'den2024';
+let TEACHER_PIN = '4321';
+
+db.collection('den-config').doc('pins').onSnapshot(snap => {
+    if (snap.exists) {
+        SITE_PIN = snap.data().site || SITE_PIN;
+        TEACHER_PIN = snap.data().teacher || TEACHER_PIN;
+    } else {
+        db.collection('den-config').doc('pins').set({ site: SITE_PIN, teacher: TEACHER_PIN });
+    }
+});
+
 // ─── SITE ENTRY PIN ───────────────────────────────────────
-const SITE_PIN = 'den2024'; // The global PIN
 const siteEntryOverlay = document.getElementById('siteEntryOverlay');
 const sitePinInput = document.getElementById('sitePinInput');
 const sitePinBtn = document.getElementById('sitePinBtn');
@@ -209,7 +221,6 @@ trackBtns.forEach(btn => {
 });
 
 // ─── TEACHER PIN ──────────────────────────────────────────
-const PIN      = '1234';
 const teacherBar = document.getElementById('teacherBar');
 const pinMsg   = document.getElementById('pinMsg');
 const pinRow   = document.getElementById('pinRow');
@@ -236,7 +247,7 @@ function applyTeacher() {
 }
 
 pinBtn.addEventListener('click', () => {
-    if (pinInput.value === PIN) {
+    if (pinInput.value === TEACHER_PIN) {
         isTeacher = true;
         sessionStorage.setItem('den-teacher', 'true');
         applyTeacher();
@@ -285,7 +296,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEvPopup
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let cy = new Date().getFullYear();
 let cm = new Date().getMonth();
-let evts = JSON.parse(localStorage.getItem('den-events') || '{}');
+let evts = {};
+
+// Global Sync for Calendar Events
+db.collection('den-events').doc('all').onSnapshot(snap => {
+    if (snap.exists) {
+        evts = snap.data().evts || {};
+    } else {
+        evts = {};
+    }
+    renderCal();
+});
 
 function renderCal() {
     // Keep the 7 header cells
@@ -353,8 +374,7 @@ function renderCal() {
                 const id = Number(pill.dataset.id);
                 evts[k] = (evts[k] || []).filter(e => e.id !== id);
                 if (!evts[k].length) delete evts[k];
-                localStorage.setItem('den-events', JSON.stringify(evts));
-                renderCal();
+                db.collection('den-events').doc('all').set({ evts });
             });
         });
     } else {
@@ -401,12 +421,13 @@ addEvtForm.addEventListener('submit', e => {
 
     if (!evts[k]) evts[k] = [];
     evts[k].push({ id: Date.now(), title, desc: evtDesc ? evtDesc.value.trim() : '' });
-    localStorage.setItem('den-events', JSON.stringify(evts));
+    db.collection('den-events').doc('all').set({ evts });
+    
     evtTitle.value = '';
     if (evtDesc) evtDesc.value = '';
     const d = new Date(k + 'T12:00:00');
     cy = d.getFullYear(); cm = d.getMonth();
-    renderCal();
+    // We don't call renderCal() here because the Firebase snapshot listener will trigger it automatically
 });
 
 // ─── INIT ─────────────────────────────────────────────────
