@@ -1,259 +1,188 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Den — Llanishen High School</title>
-    <meta name="description" content="The Den at Llanishen High School — a safe, supportive space where students can get extra help and feel better.">
+    <meta name="description" content="The Den at Llanishen High School — a safe, supportive space for students.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="light">
 
-    <!-- ── Sidebar ──────────────────────────────────────────── -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon"><i class="fa-solid fa-house-heart"></i></div>
-            <div class="brand-text">
-                <span class="brand-name">The Den</span>
-                <span class="brand-school">Llanishen High</span>
-            </div>
-            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close menu">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+<!-- Overlay for mobile sidebar -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ══ SIDEBAR ════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo">🏠</div>
+        <div>
+            <div class="sb-title">The Den</div>
+            <div class="sb-sub">Llanishen High</div>
         </div>
-
-        <nav class="sidebar-nav">
-            <button class="nav-item active" data-tab="about">
-                <i class="fa-solid fa-circle-info"></i>
-                <span>About Us</span>
-            </button>
-            <button class="nav-item" data-tab="report">
-                <i class="fa-solid fa-pen-to-square"></i>
-                <span>Report Work</span>
-            </button>
-            <button class="nav-item" data-tab="calendar">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span>Calendar</span>
-            </button>
-            <button class="nav-item" data-tab="settings">
-                <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
-            </button>
-        </nav>
-
-        <div class="sidebar-footer">
-            <span>Made with <i class="fa-solid fa-heart" style="color:var(--accent)"></i> for students</span>
-        </div>
-    </aside>
-
-    <!-- ── Sidebar Overlay (mobile) ─────────────────────────── -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- ── Main ─────────────────────────────────────────────── -->
-    <div class="main-wrapper" id="mainWrapper">
-
-        <!-- Top Bar -->
-        <header class="topbar">
-            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="topbar-title" id="topbarTitle">About Us</div>
-            <div class="theme-switcher" role="group" aria-label="Select theme">
-                <button class="theme-pill" data-theme="light" title="Light mode">
-                    <i class="fa-solid fa-sun"></i> Light
-                </button>
-                <button class="theme-pill" data-theme="dark" title="Dark mode">
-                    <i class="fa-solid fa-moon"></i> Dark
-                </button>
-                <button class="theme-pill" data-theme="modern" title="Modern mode">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Modern
-                </button>
-            </div>
-        </header>
-
-        <!-- Page Content -->
-        <main class="content-area">
-
-            <!-- ─── ABOUT TAB ─────────────────────────────────── -->
-            <section class="tab-panel active" id="tab-about">
-                <div class="hero-card">
-                    <div class="hero-glow"></div>
-                    <div class="hero-icon-wrap">
-                        <i class="fa-solid fa-house-heart"></i>
-                    </div>
-                    <h1 class="hero-title">Welcome to The Den</h1>
-                    <p class="hero-subtitle">Llanishen High School</p>
-                    <p class="hero-desc">We are a place where kids that need extra help can come to feel better!</p>
-                    <div class="hero-chips">
-                        <span class="chip"><i class="fa-solid fa-hands-holding-child"></i> Supportive</span>
-                        <span class="chip"><i class="fa-solid fa-shield-heart"></i> Safe Space</span>
-                        <span class="chip"><i class="fa-solid fa-star"></i> Inclusive</span>
-                    </div>
-                </div>
-
-                <div class="stats-row">
-                    <div class="stat-card">
-                        <i class="fa-solid fa-users stat-icon"></i>
-                        <div class="stat-label">Open to All</div>
-                        <div class="stat-desc">Every student welcome</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fa-solid fa-book-open stat-icon"></i>
-                        <div class="stat-label">Extra Help</div>
-                        <div class="stat-desc">Academic & emotional support</div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fa-solid fa-mug-hot stat-icon"></i>
-                        <div class="stat-label">Cosy Vibes</div>
-                        <div class="stat-desc">A place to relax &amp; focus</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ─── REPORT WORK TAB ───────────────────────────── -->
-            <section class="tab-panel" id="tab-report">
-                <div class="two-col-grid">
-                    <!-- Form Card -->
-                    <div class="glass-card">
-                        <div class="card-header-row">
-                            <div class="card-icon-badge"><i class="fa-solid fa-pen-to-square"></i></div>
-                            <div>
-                                <h2 class="card-title">Share Your Work</h2>
-                                <p class="card-subtitle">Let everyone know what you achieved today!</p>
-                            </div>
-                        </div>
-                        <form id="workForm" class="den-form" novalidate>
-                            <div class="field-group">
-                                <label for="studentName">Your Name</label>
-                                <div class="input-wrap">
-                                    <i class="fa-solid fa-user input-icon"></i>
-                                    <input type="text" id="studentName" placeholder="Enter your name…" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="field-group">
-                                <label for="studentWork">What Did You Do?</label>
-                                <div class="input-wrap textarea-wrap">
-                                    <i class="fa-solid fa-clipboard input-icon"></i>
-                                    <textarea id="studentWork" rows="5" placeholder="Describe the work you completed…" required></textarea>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn-primary" id="submitWorkBtn">
-                                <i class="fa-solid fa-paper-plane"></i> Post My Work
-                            </button>
-                            <p class="form-feedback hidden" id="workFeedback"></p>
-                        </form>
-                    </div>
-
-                    <!-- Feed Card -->
-                    <div class="glass-card">
-                        <div class="card-header-row">
-                            <div class="card-icon-badge orange"><i class="fa-solid fa-fire-flame-curved"></i></div>
-                            <div>
-                                <h2 class="card-title">Recent Work</h2>
-                                <p class="card-subtitle">See what everyone is working on</p>
-                            </div>
-                        </div>
-                        <div class="feed-scroll" id="workFeed">
-                            <div class="empty-state">
-                                <i class="fa-solid fa-inbox"></i>
-                                <p>Nothing shared yet — be the first!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ─── CALENDAR TAB ──────────────────────────────── -->
-            <section class="tab-panel" id="tab-calendar">
-                <div class="glass-card">
-                    <div class="card-header-row">
-                        <div class="card-icon-badge purple"><i class="fa-solid fa-calendar-days"></i></div>
-                        <div>
-                            <h2 class="card-title">School Calendar</h2>
-                            <p class="card-subtitle">Upcoming events and important dates</p>
-                        </div>
-                    </div>
-
-                    <!-- Teacher Panel -->
-                    <div class="teacher-panel hidden" id="teacherPanel">
-                        <div class="teacher-panel-header">
-                            <i class="fa-solid fa-lock-open"></i> Teacher Mode Active
-                        </div>
-                        <form id="addEventForm" class="add-event-form" novalidate>
-                            <input type="date" id="eventDate" required>
-                            <input type="text" id="eventTitle" placeholder="Event title…" required>
-                            <button type="submit" class="btn-primary small">
-                                <i class="fa-solid fa-plus"></i> Add Event
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Month Navigation -->
-                    <div class="cal-nav">
-                        <button class="cal-arrow" id="prevMonth"><i class="fa-solid fa-chevron-left"></i></button>
-                        <h3 class="cal-month-label" id="calMonthLabel">Month Year</h3>
-                        <button class="cal-arrow" id="nextMonth"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-
-                    <!-- Calendar Grid -->
-                    <div class="cal-grid-wrap">
-                        <div class="cal-grid" id="calGrid">
-                            <div class="cal-head">Sun</div>
-                            <div class="cal-head">Mon</div>
-                            <div class="cal-head">Tue</div>
-                            <div class="cal-head">Wed</div>
-                            <div class="cal-head">Thu</div>
-                            <div class="cal-head">Fri</div>
-                            <div class="cal-head">Sat</div>
-                            <!-- Days injected by JS -->
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ─── SETTINGS TAB ──────────────────────────────── -->
-            <section class="tab-panel" id="tab-settings">
-                <div class="glass-card settings-card">
-                    <div class="card-header-row">
-                        <div class="card-icon-badge green"><i class="fa-solid fa-gear"></i></div>
-                        <div>
-                            <h2 class="card-title">Settings</h2>
-                            <p class="card-subtitle">Manage your Den experience</p>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <div class="settings-section-header">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <h3>Teacher Access</h3>
-                        </div>
-                        <p class="settings-desc">Unlock Teacher Mode to manage calendar events. This mode is private and PIN-protected.</p>
-                        <div class="pin-box" id="pinBox">
-                            <div id="pinStatusMsg"></div>
-                            <div class="pin-input-row" id="pinInputRow">
-                                <div class="input-wrap pin-wrap">
-                                    <i class="fa-solid fa-key input-icon"></i>
-                                    <input type="password" id="teacherPin" placeholder="Enter Teacher PIN…" maxlength="10">
-                                </div>
-                                <button class="btn-primary small" id="submitPinBtn">
-                                    <i class="fa-solid fa-unlock"></i> Unlock
-                                </button>
-                            </div>
-                            <button class="btn-danger hidden" id="logoutTeacherBtn">
-                                <i class="fa-solid fa-lock"></i> Lock Teacher Mode
-                            </button>
-                        </div>
-                        <p class="hint-text"><i class="fa-solid fa-circle-info"></i> Default PIN is <code>1234</code>. Connect Firebase to make this fully secure.</p>
-                    </div>
-                </div>
-            </section>
-
-        </main>
+        <button class="close-btn" id="closeBtn">✕</button>
     </div>
 
-    <script src="app.js"></script>
+    <nav class="sb-nav">
+        <button class="sb-link active" data-tab="about">
+            <span class="sb-icon">💜</span> About Us
+        </button>
+        <button class="sb-link" data-tab="report">
+            <span class="sb-icon">✏️</span> Report Work
+        </button>
+        <button class="sb-link" data-tab="calendar">
+            <span class="sb-icon">📅</span> Calendar
+        </button>
+        <button class="sb-link" data-tab="settings">
+            <span class="sb-icon">⚙️</span> Settings
+        </button>
+    </nav>
+
+    <div class="sb-footer">Made with 💛 for students</div>
+</aside>
+
+<!-- ══ MAIN ══════════════════════════════════════════════ -->
+<div class="main" id="main">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+        <button class="burger" id="burgerBtn">☰</button>
+        <span class="page-title" id="pageTitle">About Us</span>
+        <div class="themes">
+            <button class="t-btn active" data-t="light">☀ Light</button>
+            <button class="t-btn" data-t="dark">🌙 Dark</button>
+            <button class="t-btn" data-t="modern">✨ Modern</button>
+        </div>
+    </header>
+
+    <!-- ── ABOUT ─────────────────────────────────────────── -->
+    <section class="page active" id="page-about">
+        <div class="hero">
+            <div class="hero-glow"></div>
+            <div class="hero-emoji">🏠</div>
+            <h1>Welcome to The Den</h1>
+            <p class="hero-school">Llanishen High School</p>
+            <p class="hero-desc">We are a place where kids that need extra help can come to feel better!</p>
+            <div class="tags">
+                <span class="tag">🤝 Supportive</span>
+                <span class="tag">🛡️ Safe Space</span>
+                <span class="tag">⭐ Inclusive</span>
+            </div>
+        </div>
+
+        <div class="cards-row">
+            <div class="info-card">
+                <div class="ic-emoji">👥</div>
+                <div class="ic-label">Open to All</div>
+                <div class="ic-desc">Every student is welcome here</div>
+            </div>
+            <div class="info-card">
+                <div class="ic-emoji">📚</div>
+                <div class="ic-label">Extra Help</div>
+                <div class="ic-desc">Academic &amp; emotional support</div>
+            </div>
+            <div class="info-card">
+                <div class="ic-emoji">☕</div>
+                <div class="ic-label">Cosy Vibes</div>
+                <div class="ic-desc">A place to relax and focus</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── REPORT WORK ────────────────────────────────────── -->
+    <section class="page" id="page-report">
+        <div class="two-col">
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-badge" style="background:#e07b39">✏️</div>
+                    <div>
+                        <h2>Share Your Work</h2>
+                        <p>Tell everyone what you achieved today!</p>
+                    </div>
+                </div>
+                <form id="workForm">
+                    <label>Your Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your name…" autocomplete="off" required>
+                    <label>What Did You Do?</label>
+                    <textarea id="studentWork" rows="5" placeholder="Describe the work you completed…" required></textarea>
+                    <button type="submit" class="btn-accent">🚀 Post My Work</button>
+                    <div id="workMsg" class="msg hidden"></div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-badge" style="background:#f39c12">🔥</div>
+                    <div>
+                        <h2>Recent Work</h2>
+                        <p>See what everyone is working on</p>
+                    </div>
+                </div>
+                <div class="feed" id="workFeed"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CALENDAR ───────────────────────────────────────── -->
+    <section class="page" id="page-calendar">
+        <div class="panel wide">
+            <div class="panel-head">
+                <div class="panel-badge" style="background:#8e44ad">📅</div>
+                <div>
+                    <h2>School Calendar</h2>
+                    <p>Upcoming events &amp; important dates</p>
+                </div>
+            </div>
+
+            <div class="teacher-bar hidden" id="teacherBar">
+                <strong>🔓 Teacher Mode</strong>
+                <form id="addEvtForm">
+                    <input type="date" id="evtDate" required>
+                    <input type="text" id="evtTitle" placeholder="Event title…" required>
+                    <button type="submit" class="btn-accent small">+ Add</button>
+                </form>
+            </div>
+
+            <div class="cal-nav">
+                <button class="cal-arr" id="prevMo">‹</button>
+                <h3 id="calLabel">Month Year</h3>
+                <button class="cal-arr" id="nextMo">›</button>
+            </div>
+
+            <div class="cal-wrap">
+                <div class="cal" id="calGrid">
+                    <div class="ch">Sun</div><div class="ch">Mon</div><div class="ch">Tue</div>
+                    <div class="ch">Wed</div><div class="ch">Thu</div><div class="ch">Fri</div><div class="ch">Sat</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SETTINGS ───────────────────────────────────────── -->
+    <section class="page" id="page-settings">
+        <div class="panel" style="max-width:560px">
+            <div class="panel-head">
+                <div class="panel-badge" style="background:#27ae60">⚙️</div>
+                <div><h2>Settings</h2><p>Manage your experience</p></div>
+            </div>
+
+            <div class="settings-box">
+                <h3>🔒 Teacher Access</h3>
+                <p>Enter the Teacher PIN to unlock calendar management. This is private and protected.</p>
+                <div id="pinMsg"></div>
+                <div id="pinRow" class="pin-row">
+                    <input type="password" id="pinInput" placeholder="Enter Teacher PIN…" maxlength="10">
+                    <button class="btn-accent small" id="pinBtn">Unlock</button>
+                </div>
+                <button class="btn-danger hidden" id="lockBtn">🔒 Lock Teacher Mode</button>
+                <p class="hint">💡 Default PIN is <code>1234</code>. Firebase can be added for full security.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>

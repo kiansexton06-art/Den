@@ -1,57 +1,55 @@
 (() => {
 'use strict';
 
-// ── Theme ─────────────────────────────────────────────────
-const html = document.documentElement;
-const themePills = document.querySelectorAll('.theme-pill');
+// ─── THEME ───────────────────────────────────────────────
+const body = document.body;
+const tBtns = document.querySelectorAll('.t-btn');
 
 function setTheme(t) {
-    html.setAttribute('data-theme', t);
+    body.className = t;
     localStorage.setItem('den-theme', t);
-    themePills.forEach(p => p.classList.toggle('active', p.dataset.theme === t));
+    tBtns.forEach(b => b.classList.toggle('active', b.dataset.t === t));
 }
 setTheme(localStorage.getItem('den-theme') || 'light');
-themePills.forEach(p => p.addEventListener('click', () => setTheme(p.dataset.theme)));
+tBtns.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.t)));
 
-// ── Sidebar ───────────────────────────────────────────────
-const sidebar        = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-const hamburgerBtn   = document.getElementById('hamburgerBtn');
-const sidebarCloseBtn= document.getElementById('sidebarCloseBtn');
+// ─── SIDEBAR ──────────────────────────────────────────────
+const sidebar  = document.getElementById('sidebar');
+const overlay  = document.getElementById('overlay');
+const burgerBtn= document.getElementById('burgerBtn');
+const closeBtn = document.getElementById('closeBtn');
 
-function openSidebar()  { sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
-function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
+function openSB()  { sidebar.classList.add('open'); overlay.classList.add('show'); }
+function closeSB() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
 
-hamburgerBtn.addEventListener('click', openSidebar);
-sidebarCloseBtn.addEventListener('click', closeSidebar);
-sidebarOverlay.addEventListener('click', closeSidebar);
+burgerBtn.addEventListener('click', openSB);
+closeBtn.addEventListener('click', closeSB);
+overlay.addEventListener('click', closeSB);
 
-// ── Tab Navigation ────────────────────────────────────────
-const navItems    = document.querySelectorAll('.nav-item');
-const tabPanels   = document.querySelectorAll('.tab-panel');
-const topbarTitle = document.getElementById('topbarTitle');
-const tabTitles   = { about: 'About Us', report: 'Report Work', calendar: 'Calendar', settings: 'Settings' };
+// ─── TABS ─────────────────────────────────────────────────
+const sbLinks  = document.querySelectorAll('.sb-link');
+const pages    = document.querySelectorAll('.page');
+const pageTitle= document.getElementById('pageTitle');
+const labels   = { about:'About Us', report:'Report Work', calendar:'Calendar', settings:'Settings' };
 
-function showTab(id) {
-    navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === id));
-    tabPanels.forEach(p => p.classList.toggle('active', p.id === `tab-${id}`));
-    topbarTitle.textContent = tabTitles[id] || '';
-    if (window.innerWidth < 1024) closeSidebar();
+function showPage(id) {
+    sbLinks.forEach(l => l.classList.toggle('active', l.dataset.tab === id));
+    pages.forEach(p => p.classList.toggle('active', p.id === `page-${id}`));
+    pageTitle.textContent = labels[id] || '';
+    if (window.innerWidth < 901) closeSB();
 }
+sbLinks.forEach(l => l.addEventListener('click', () => showPage(l.dataset.tab)));
 
-navItems.forEach(n => n.addEventListener('click', () => showTab(n.dataset.tab)));
-
-// ── Work Feed ─────────────────────────────────────────────
-const workForm    = document.getElementById('workForm');
-const nameInput   = document.getElementById('studentName');
-const workInput   = document.getElementById('studentWork');
-const workFeed    = document.getElementById('workFeed');
-const submitBtn   = document.getElementById('submitWorkBtn');
-const feedbackEl  = document.getElementById('workFeedback');
+// ─── WORK FEED ────────────────────────────────────────────
+const workForm = document.getElementById('workForm');
+const nameInp  = document.getElementById('studentName');
+const workInp  = document.getElementById('studentWork');
+const workFeed = document.getElementById('workFeed');
+const workMsg  = document.getElementById('workMsg');
 
 let works = JSON.parse(localStorage.getItem('den-works') || '[]');
 
-function escapeHTML(s) {
+function esc(s) {
     const d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
@@ -59,194 +57,168 @@ function escapeHTML(s) {
 
 function renderFeed() {
     if (!works.length) {
-        workFeed.innerHTML = `
-          <div class="empty-state">
-            <i class="fa-solid fa-inbox"></i>
-            <p>Nothing shared yet — be the first!</p>
-          </div>`;
+        workFeed.innerHTML = '<div class="empty">📭 Nothing shared yet — be the first!</div>';
         return;
     }
     workFeed.innerHTML = works.map(w => `
-      <div class="work-card">
-        <div class="work-card-top">
-          <span class="work-name"><i class="fa-solid fa-circle-user"></i> ${escapeHTML(w.name)}</span>
-          <span class="work-date">${w.date}</span>
-        </div>
-        <p class="work-body">${escapeHTML(w.content)}</p>
-      </div>`).join('');
-}
-
-function showFeedback(msg, type) {
-    feedbackEl.textContent = msg;
-    feedbackEl.className = `form-feedback ${type}`;
-    feedbackEl.classList.remove('hidden');
-    setTimeout(() => feedbackEl.classList.add('hidden'), 3000);
+        <div class="work-item">
+            <div class="wi-top">
+                <span class="wi-name">👤 ${esc(w.name)}</span>
+                <span class="wi-date">${w.date}</span>
+            </div>
+            <div class="wi-text">${esc(w.content)}</div>
+        </div>`).join('');
 }
 
 workForm.addEventListener('submit', e => {
     e.preventDefault();
-    const name = nameInput.value.trim();
-    const content = workInput.value.trim();
+    const name = nameInp.value.trim();
+    const content = workInp.value.trim();
     if (!name || !content) return;
 
     works.unshift({
-        id: Date.now(),
-        name,
-        content,
+        id: Date.now(), name, content,
         date: new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
     });
     if (works.length > 50) works.pop();
     localStorage.setItem('den-works', JSON.stringify(works));
     renderFeed();
     workForm.reset();
-    showFeedback('✓ Work posted successfully!', 'success');
+
+    workMsg.textContent = '✅ Work posted!';
+    workMsg.className = 'msg ok';
+    workMsg.classList.remove('hidden');
+    setTimeout(() => workMsg.classList.add('hidden'), 3000);
 });
 
 renderFeed();
 
-// ── Teacher PIN ───────────────────────────────────────────
-const TEACHER_PIN      = '1234';
-const teacherPanel     = document.getElementById('teacherPanel');
-const pinStatusMsg     = document.getElementById('pinStatusMsg');
-const pinInputRow      = document.getElementById('pinInputRow');
-const teacherPinInput  = document.getElementById('teacherPin');
-const submitPinBtn     = document.getElementById('submitPinBtn');
-const logoutTeacherBtn = document.getElementById('logoutTeacherBtn');
+// ─── TEACHER PIN ──────────────────────────────────────────
+const PIN          = '1234';
+const teacherBar   = document.getElementById('teacherBar');
+const pinMsg       = document.getElementById('pinMsg');
+const pinRow       = document.getElementById('pinRow');
+const pinInput     = document.getElementById('pinInput');
+const pinBtn       = document.getElementById('pinBtn');
+const lockBtn      = document.getElementById('lockBtn');
 
 let isTeacher = sessionStorage.getItem('den-teacher') === 'true';
 
-function applyTeacherMode() {
+function applyTeacher() {
     if (isTeacher) {
-        pinInputRow.classList.add('hidden');
-        logoutTeacherBtn.classList.remove('hidden');
-        teacherPanel.classList.remove('hidden');
-        pinStatusMsg.innerHTML = '<span style="color:#27ae60"><i class="fa-solid fa-lock-open"></i> Teacher Mode Active</span>';
+        pinRow.classList.add('hidden');
+        lockBtn.classList.remove('hidden');
+        teacherBar.classList.remove('hidden');
+        pinMsg.innerHTML = '<span style="color:#16a34a">🔓 Teacher Mode Active</span>';
     } else {
-        pinInputRow.classList.remove('hidden');
-        logoutTeacherBtn.classList.add('hidden');
-        teacherPanel.classList.add('hidden');
-        pinStatusMsg.innerHTML = '';
-        teacherPinInput.value = '';
+        pinRow.classList.remove('hidden');
+        lockBtn.classList.add('hidden');
+        teacherBar.classList.add('hidden');
+        pinMsg.innerHTML = '';
+        pinInput.value = '';
     }
-    renderCalendar();
+    renderCal();
 }
 
-submitPinBtn.addEventListener('click', () => {
-    if (teacherPinInput.value === TEACHER_PIN) {
+pinBtn.addEventListener('click', () => {
+    if (pinInput.value === PIN) {
         isTeacher = true;
         sessionStorage.setItem('den-teacher', 'true');
-        applyTeacherMode();
+        applyTeacher();
     } else {
-        pinStatusMsg.innerHTML = '<span style="color:#e74c3c"><i class="fa-solid fa-circle-xmark"></i> Incorrect PIN. Try again.</span>';
+        pinMsg.innerHTML = '<span style="color:#dc2626">❌ Incorrect PIN</span>';
     }
 });
-
-teacherPinInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitPinBtn.click(); });
-
-logoutTeacherBtn.addEventListener('click', () => {
+pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') pinBtn.click(); });
+lockBtn.addEventListener('click', () => {
     isTeacher = false;
     sessionStorage.removeItem('den-teacher');
-    applyTeacherMode();
+    applyTeacher();
 });
 
-// ── Calendar ──────────────────────────────────────────────
-const calGrid      = document.getElementById('calGrid');
-const calMonthLbl  = document.getElementById('calMonthLabel');
-const prevMonthBtn = document.getElementById('prevMonth');
-const nextMonthBtn = document.getElementById('nextMonth');
-const addEventForm = document.getElementById('addEventForm');
-const eventDateInp = document.getElementById('eventDate');
-const eventTitleInp= document.getElementById('eventTitle');
+// ─── CALENDAR ─────────────────────────────────────────────
+const calGrid  = document.getElementById('calGrid');
+const calLabel = document.getElementById('calLabel');
+const prevMo   = document.getElementById('prevMo');
+const nextMo   = document.getElementById('nextMo');
+const addEvtForm = document.getElementById('addEvtForm');
+const evtDate  = document.getElementById('evtDate');
+const evtTitle = document.getElementById('evtTitle');
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let cy = new Date().getFullYear();
+let cm = new Date().getMonth();
+let evts = JSON.parse(localStorage.getItem('den-events') || '{}');
 
-let calYear  = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-let events   = JSON.parse(localStorage.getItem('den-events') || '{}');
-
-function renderCalendar() {
-    // Remove day cells (keep the 7 header cells)
-    const heads = Array.from(calGrid.querySelectorAll('.cal-head'));
+function renderCal() {
+    // Keep the 7 header cells
+    const heads = Array.from(calGrid.querySelectorAll('.ch'));
     calGrid.innerHTML = '';
     heads.forEach(h => calGrid.appendChild(h));
 
-    calMonthLbl.textContent = `${MONTHS[calMonth]} ${calYear}`;
+    calLabel.textContent = `${MONTHS[cm]} ${cy}`;
 
-    const today     = new Date();
-    const firstDay  = new Date(calYear, calMonth, 1).getDay();
-    const daysInMon = new Date(calYear, calMonth + 1, 0).getDate();
+    const today  = new Date();
+    const first  = new Date(cy, cm, 1).getDay();
+    const days   = new Date(cy, cm + 1, 0).getDate();
 
-    // Blank leading cells
-    for (let i = 0; i < firstDay; i++) {
+    for (let i = 0; i < first; i++) {
         const el = document.createElement('div');
-        el.className = 'cal-day empty';
+        el.className = 'cd blank';
         calGrid.appendChild(el);
     }
 
-    // Day cells
-    for (let d = 1; d <= daysInMon; d++) {
-        const el  = document.createElement('div');
-        el.className = 'cal-day';
-        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
+    for (let d = 1; d <= days; d++) {
+        const el = document.createElement('div');
+        el.className = 'cd';
+        const key = `${cy}-${String(cm+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isToday = today.getFullYear()===cy && today.getMonth()===cm && today.getDate()===d;
         if (isToday) el.classList.add('today');
 
-        const dateKey = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        const dayEvs  = events[dateKey] || [];
-
-        let html = `<span class="day-num">${d}</span>`;
-        dayEvs.forEach(ev => {
-            html += `<div class="event-pill ${isTeacher ? 'deleteable' : ''}" data-key="${dateKey}" data-id="${ev.id}">
-                <span>${escapeHTML(ev.title)}</span>
-                ${isTeacher ? '<i class="fa-solid fa-xmark" style="font-size:.7rem"></i>' : ''}
+        let html = `<span class="dn">${d}</span>`;
+        (evts[key] || []).forEach(ev => {
+            html += `<div class="ev ${isTeacher ? 'can' : ''}" data-k="${key}" data-id="${ev.id}">
+                <span>${esc(ev.title)}</span>${isTeacher ? '<span>✕</span>' : ''}
             </div>`;
         });
         el.innerHTML = html;
         calGrid.appendChild(el);
     }
 
-    // Delete listeners
     if (isTeacher) {
-        calGrid.querySelectorAll('.event-pill.deleteable').forEach(pill => {
-            pill.addEventListener('click', () => {
-                const key = pill.dataset.key;
-                const id  = Number(pill.dataset.id);
-                events[key] = (events[key] || []).filter(ev => ev.id !== id);
-                if (!events[key].length) delete events[key];
-                localStorage.setItem('den-events', JSON.stringify(events));
-                renderCalendar();
+        calGrid.querySelectorAll('.ev.can').forEach(el => {
+            el.addEventListener('click', () => {
+                const k = el.dataset.k;
+                const id = Number(el.dataset.id);
+                evts[k] = (evts[k] || []).filter(e => e.id !== id);
+                if (!evts[k].length) delete evts[k];
+                localStorage.setItem('den-events', JSON.stringify(evts));
+                renderCal();
             });
         });
     }
 }
 
-prevMonthBtn.addEventListener('click', () => {
-    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
-    renderCalendar();
-});
-nextMonthBtn.addEventListener('click', () => {
-    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
-    renderCalendar();
-});
+prevMo.addEventListener('click', () => { cm--; if (cm < 0) { cm=11; cy--; } renderCal(); });
+nextMo.addEventListener('click', () => { cm++; if (cm > 11) { cm=0; cy++; } renderCal(); });
 
-addEventForm.addEventListener('submit', e => {
+addEvtForm.addEventListener('submit', e => {
     e.preventDefault();
     if (!isTeacher) return;
-    const key   = eventDateInp.value;
-    const title = eventTitleInp.value.trim();
-    if (!key || !title) return;
-    if (!events[key]) events[key] = [];
-    events[key].push({ id: Date.now(), title });
-    localStorage.setItem('den-events', JSON.stringify(events));
-    eventTitleInp.value = '';
-    // Jump to the month of the added event
-    const d = new Date(key + 'T12:00:00');
-    calYear = d.getFullYear();
-    calMonth = d.getMonth();
-    renderCalendar();
+    const k = evtDate.value;
+    const title = evtTitle.value.trim();
+    if (!k || !title) return;
+    if (!evts[k]) evts[k] = [];
+    evts[k].push({ id: Date.now(), title });
+    localStorage.setItem('den-events', JSON.stringify(evts));
+    evtTitle.value = '';
+    const d = new Date(k + 'T12:00:00');
+    cy = d.getFullYear(); cm = d.getMonth();
+    renderCal();
 });
 
-// ── Init ──────────────────────────────────────────────────
-applyTeacherMode();
-renderCalendar();
+// ─── INIT ─────────────────────────────────────────────────
+applyTeacher();
+renderCal();
 
 })();
