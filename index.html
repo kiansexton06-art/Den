@@ -75,6 +75,7 @@
             <div class="sm-tabs">
                 <button class="sm-tab active" data-stab="pin">🔒 PIN</button>
                 <button class="sm-tab" data-stab="styles">🎨 Styles</button>
+                <button class="sm-tab" data-stab="audio">🎵 Audio</button>
             </div>
             <!-- PIN TAB -->
             <div class="sm-pane active" id="stab-pin">
@@ -112,6 +113,31 @@
                             <span class="style-desc">Sleek &amp; bold</span>
                         </button>
                     </div>
+                </div>
+            </div>
+            <!-- AUDIO TAB -->
+            <div class="sm-pane" id="stab-audio">
+                <div class="ss-card">
+                    <h3>🎵 Focus Audio</h3>
+                    <p>Listen to relaxing background sounds to help you concentrate.</p>
+                    
+                    <div class="audio-tracks">
+                        <button class="track-btn active" data-src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Rain_on_a_tin_roof.ogg">🌧️ Rain</button>
+                        <button class="track-btn" data-src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Ocean_waves_hitting_the_shore.ogg">🌊 Waves</button>
+                        <button class="track-btn" data-src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Brownnoise.ogg">🤎 Brown Noise</button>
+                    </div>
+
+                    <div class="audio-controls">
+                        <button id="audioPlayBtn" class="btn-accent">▶ Play</button>
+                        <div class="vol-control">
+                            <span>🔉</span>
+                            <input type="range" id="audioVol" min="0" max="1" step="0.05" value="0.3">
+                            <span>🔊</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden Audio Element -->
+                    <audio id="bgAudio" loop></audio>
                 </div>
             </div>
         </div>

@@ -922,6 +922,54 @@ form textarea:focus {
     .ss-body { padding: 16px; }
 }
 
+/* Audio settings */
+.audio-tracks {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.track-btn {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: .85rem;
+    font-weight: 700;
+    transition: all .2s;
+}
+.track-btn:hover { background: var(--border); }
+.track-btn.active {
+    background: var(--surface);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(224,123,57,.15);
+}
+
+.audio-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: var(--surface2);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.vol-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+.vol-control input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
 /* ═══════════════════════════════════════════════
    SITE ENTRY OVERLAY
 ═══════════════════════════════════════════════ */

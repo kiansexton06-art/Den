@@ -175,6 +175,39 @@ smTabs.forEach(tab => {
     });
 });
 
+// ─── FOCUS AUDIO ──────────────────────────────────────────
+const bgAudio      = document.getElementById('bgAudio');
+const audioPlayBtn = document.getElementById('audioPlayBtn');
+const audioVol     = document.getElementById('audioVol');
+const trackBtns    = document.querySelectorAll('.track-btn');
+
+bgAudio.volume = audioVol.value;
+bgAudio.src = document.querySelector('.track-btn.active').dataset.src;
+
+audioPlayBtn.addEventListener('click', () => {
+    if (bgAudio.paused) {
+        bgAudio.play();
+        audioPlayBtn.innerHTML = '⏸ Pause';
+    } else {
+        bgAudio.pause();
+        audioPlayBtn.innerHTML = '▶ Play';
+    }
+});
+
+audioVol.addEventListener('input', e => {
+    bgAudio.volume = e.target.value;
+});
+
+trackBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        trackBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const wasPlaying = !bgAudio.paused;
+        bgAudio.src = btn.dataset.src;
+        if (wasPlaying) bgAudio.play();
+    });
+});
+
 // ─── TEACHER PIN ──────────────────────────────────────────
 const PIN      = '1234';
 const teacherBar = document.getElementById('teacherBar');
