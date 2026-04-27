@@ -51,49 +51,53 @@
         <button class="settings-icon-btn" id="settingsIconBtn" title="Settings">⚙️</button>
     </header>
 
-    <!-- ══ SETTINGS MODAL ══════════════════════════════════ -->
-    <div class="modal-backdrop hidden" id="modalBackdrop">
-        <div class="settings-modal">
-            <div class="sm-header">
-                <span class="sm-title">⚙️ Settings</span>
-                <button class="sm-close" id="smClose">✕</button>
-            </div>
+    <!-- ══ SETTINGS FULL SCREEN ═══════════════════════════ -->
+    <div class="settings-screen hidden" id="settingsScreen">
+        <div class="ss-topbar">
+            <button class="ss-back" id="ssBack">← Back</button>
+            <span class="ss-title">⚙️ Settings</span>
+        </div>
+        <div class="ss-body">
             <div class="sm-tabs">
                 <button class="sm-tab active" data-stab="pin">🔒 PIN</button>
                 <button class="sm-tab" data-stab="styles">🎨 Styles</button>
             </div>
             <!-- PIN TAB -->
             <div class="sm-pane active" id="stab-pin">
-                <h3>🔒 Teacher Access</h3>
-                <p>Enter the Teacher PIN to unlock calendar management. This is private and protected.</p>
-                <div id="pinMsg"></div>
-                <div id="pinRow" class="pin-row">
-                    <input type="password" id="pinInput" placeholder="Enter Teacher PIN…" maxlength="10">
-                    <button class="btn-accent small" id="pinBtn">Unlock</button>
+                <div class="ss-card">
+                    <h3>🔒 Teacher Access</h3>
+                    <p>Enter the Teacher PIN to unlock calendar management. This is private and protected.</p>
+                    <div id="pinMsg"></div>
+                    <div id="pinRow" class="pin-row">
+                        <input type="password" id="pinInput" placeholder="Enter Teacher PIN…" maxlength="10">
+                        <button class="btn-accent small" id="pinBtn">Unlock</button>
+                    </div>
+                    <button class="btn-danger hidden" id="lockBtn">🔒 Lock Teacher Mode</button>
+                    <p class="hint">💡 Default PIN is <code>1234</code>. Firebase can be added for full security.</p>
                 </div>
-                <button class="btn-danger hidden" id="lockBtn">🔒 Lock Teacher Mode</button>
-                <p class="hint">💡 Default PIN is <code>1234</code>. Firebase can be added for full security.</p>
             </div>
             <!-- STYLES TAB -->
             <div class="sm-pane" id="stab-styles">
-                <h3>🎨 Choose Your Theme</h3>
-                <p>Pick a style that feels right for you.</p>
-                <div class="style-options">
-                    <button class="style-opt" data-t="light">
-                        <div class="style-preview light-prev"></div>
-                        <span class="style-label">☀️ Light</span>
-                        <span class="style-desc">Warm &amp; cosy</span>
-                    </button>
-                    <button class="style-opt" data-t="dark">
-                        <div class="style-preview dark-prev"></div>
-                        <span class="style-label">🌙 Dark</span>
-                        <span class="style-desc">Easy on the eyes</span>
-                    </button>
-                    <button class="style-opt" data-t="modern">
-                        <div class="style-preview modern-prev"></div>
-                        <span class="style-label">✨ Modern</span>
-                        <span class="style-desc">Sleek &amp; bold</span>
-                    </button>
+                <div class="ss-card">
+                    <h3>🎨 Choose Your Theme</h3>
+                    <p>Pick a style that feels right for you.</p>
+                    <div class="style-options">
+                        <button class="style-opt" data-t="light">
+                            <div class="style-preview light-prev"></div>
+                            <span class="style-label">☀️ Light</span>
+                            <span class="style-desc">Warm &amp; cosy</span>
+                        </button>
+                        <button class="style-opt" data-t="dark">
+                            <div class="style-preview dark-prev"></div>
+                            <span class="style-label">🌙 Dark</span>
+                            <span class="style-desc">Easy on the eyes</span>
+                        </button>
+                        <button class="style-opt" data-t="modern">
+                            <div class="style-preview modern-prev"></div>
+                            <span class="style-label">✨ Modern</span>
+                            <span class="style-desc">Sleek &amp; bold</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

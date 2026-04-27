@@ -99,19 +99,18 @@ workForm.addEventListener('submit', e => {
 
 renderFeed();
 
-// ─── SETTINGS MODAL ───────────────────────────────────────
-const modalBackdrop   = document.getElementById('modalBackdrop');
+// ─── SETTINGS SCREEN ───────────────────────────────────────
+const settingsScreen  = document.getElementById('settingsScreen');
 const settingsIconBtn = document.getElementById('settingsIconBtn');
-const smClose         = document.getElementById('smClose');
+const ssBack          = document.getElementById('ssBack');
 const smTabs          = document.querySelectorAll('.sm-tab');
 const smPanes         = document.querySelectorAll('.sm-pane');
 
-function openModal()  { modalBackdrop.classList.remove('hidden'); }
-function closeModal() { modalBackdrop.classList.add('hidden'); }
+function openSettings()  { settingsScreen.classList.remove('hidden'); }
+function closeSettings() { settingsScreen.classList.add('hidden'); }
 
-settingsIconBtn.addEventListener('click', openModal);
-smClose.addEventListener('click', closeModal);
-modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+settingsIconBtn.addEventListener('click', openSettings);
+ssBack.addEventListener('click', closeSettings);
 
 smTabs.forEach(tab => {
     tab.addEventListener('click', () => {
