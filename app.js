@@ -236,6 +236,25 @@ addEvtForm.addEventListener('submit', e => {
     const k = evtDate.value;
     const title = evtTitle.value.trim();
     if (!k || !title) return;
+
+    // Block weekends (0 = Sunday, 6 = Saturday)
+    const dayOfWeek = new Date(k + 'T12:00:00').getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+        evtTitle.setCustomValidity('');
+        evtDate.style.borderColor = '#dc2626';
+        const existing = document.getElementById('weekendWarn');
+        if (!existing) {
+            const warn = document.createElement('p');
+            warn.id = 'weekendWarn';
+            warn.style.cssText = 'color:#dc2626;font-size:.82rem;font-weight:700;margin-top:4px';
+            warn.textContent = '⛔ Weekends not allowed — pick a Monday to Friday date.';
+            addEvtForm.after(warn);
+            setTimeout(() => { warn.remove(); evtDate.style.borderColor = ''; }, 3500);
+        }
+        return;
+    }
+    evtDate.style.borderColor = '';
+
     if (!evts[k]) evts[k] = [];
     evts[k].push({ id: Date.now(), title });
     localStorage.setItem('den-events', JSON.stringify(evts));
