@@ -35,9 +35,7 @@
         <button class="sb-link" data-tab="calendar">
             <span class="sb-icon">📅</span> Calendar
         </button>
-        <button class="sb-link" data-tab="settings">
-            <span class="sb-icon">⚙️</span> Settings
-        </button>
+
     </nav>
 
     <div class="sb-footer">Made with 💛 for students</div>
@@ -50,12 +48,56 @@
     <header class="topbar">
         <button class="burger" id="burgerBtn">☰</button>
         <span class="page-title" id="pageTitle">About Us</span>
-        <div class="themes">
-            <button class="t-btn active" data-t="light">☀ Light</button>
-            <button class="t-btn" data-t="dark">🌙 Dark</button>
-            <button class="t-btn" data-t="modern">✨ Modern</button>
-        </div>
+        <button class="settings-icon-btn" id="settingsIconBtn" title="Settings">⚙️</button>
     </header>
+
+    <!-- ══ SETTINGS MODAL ══════════════════════════════════ -->
+    <div class="modal-backdrop hidden" id="modalBackdrop">
+        <div class="settings-modal">
+            <div class="sm-header">
+                <span class="sm-title">⚙️ Settings</span>
+                <button class="sm-close" id="smClose">✕</button>
+            </div>
+            <div class="sm-tabs">
+                <button class="sm-tab active" data-stab="pin">🔒 PIN</button>
+                <button class="sm-tab" data-stab="styles">🎨 Styles</button>
+            </div>
+            <!-- PIN TAB -->
+            <div class="sm-pane active" id="stab-pin">
+                <h3>🔒 Teacher Access</h3>
+                <p>Enter the Teacher PIN to unlock calendar management. This is private and protected.</p>
+                <div id="pinMsg"></div>
+                <div id="pinRow" class="pin-row">
+                    <input type="password" id="pinInput" placeholder="Enter Teacher PIN…" maxlength="10">
+                    <button class="btn-accent small" id="pinBtn">Unlock</button>
+                </div>
+                <button class="btn-danger hidden" id="lockBtn">🔒 Lock Teacher Mode</button>
+                <p class="hint">💡 Default PIN is <code>1234</code>. Firebase can be added for full security.</p>
+            </div>
+            <!-- STYLES TAB -->
+            <div class="sm-pane" id="stab-styles">
+                <h3>🎨 Choose Your Theme</h3>
+                <p>Pick a style that feels right for you.</p>
+                <div class="style-options">
+                    <button class="style-opt" data-t="light">
+                        <div class="style-preview light-prev"></div>
+                        <span class="style-label">☀️ Light</span>
+                        <span class="style-desc">Warm &amp; cosy</span>
+                    </button>
+                    <button class="style-opt" data-t="dark">
+                        <div class="style-preview dark-prev"></div>
+                        <span class="style-label">🌙 Dark</span>
+                        <span class="style-desc">Easy on the eyes</span>
+                    </button>
+                    <button class="style-opt" data-t="modern">
+                        <div class="style-preview modern-prev"></div>
+                        <span class="style-label">✨ Modern</span>
+                        <span class="style-desc">Sleek &amp; bold</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ── ABOUT ─────────────────────────────────────────── -->
     <section class="page active" id="page-about">
@@ -160,27 +202,7 @@
         </div>
     </section>
 
-    <!-- ── SETTINGS ───────────────────────────────────────── -->
-    <section class="page" id="page-settings">
-        <div class="panel" style="max-width:560px">
-            <div class="panel-head">
-                <div class="panel-badge" style="background:#27ae60">⚙️</div>
-                <div><h2>Settings</h2><p>Manage your experience</p></div>
-            </div>
 
-            <div class="settings-box">
-                <h3>🔒 Teacher Access</h3>
-                <p>Enter the Teacher PIN to unlock calendar management. This is private and protected.</p>
-                <div id="pinMsg"></div>
-                <div id="pinRow" class="pin-row">
-                    <input type="password" id="pinInput" placeholder="Enter Teacher PIN…" maxlength="10">
-                    <button class="btn-accent small" id="pinBtn">Unlock</button>
-                </div>
-                <button class="btn-danger hidden" id="lockBtn">🔒 Lock Teacher Mode</button>
-                <p class="hint">💡 Default PIN is <code>1234</code>. Firebase can be added for full security.</p>
-            </div>
-        </div>
-    </section>
 </div>
 
 <script src="app.js"></script>

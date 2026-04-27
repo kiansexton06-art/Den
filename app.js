@@ -3,15 +3,21 @@
 
 // ─── THEME ───────────────────────────────────────────────
 const body = document.body;
-const tBtns = document.querySelectorAll('.t-btn');
 
 function setTheme(t) {
     body.className = t;
     localStorage.setItem('den-theme', t);
-    tBtns.forEach(b => b.classList.toggle('active', b.dataset.t === t));
+    // update style option active state
+    document.querySelectorAll('.style-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.t === t)
+    );
 }
 setTheme(localStorage.getItem('den-theme') || 'light');
-tBtns.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.t)));
+
+// Style options inside settings modal
+document.querySelectorAll('.style-opt').forEach(b =>
+    b.addEventListener('click', () => setTheme(b.dataset.t))
+);
 
 // ─── SIDEBAR ──────────────────────────────────────────────
 const sidebar  = document.getElementById('sidebar');
@@ -30,7 +36,7 @@ overlay.addEventListener('click', closeSB);
 const sbLinks  = document.querySelectorAll('.sb-link');
 const pages    = document.querySelectorAll('.page');
 const pageTitle= document.getElementById('pageTitle');
-const labels   = { about:'About Us', report:'Report Work', calendar:'Calendar', settings:'Settings' };
+const labels   = { about:'About Us', report:'Report Work', calendar:'Calendar' };
 
 function showPage(id) {
     sbLinks.forEach(l => l.classList.toggle('active', l.dataset.tab === id));
@@ -93,14 +99,37 @@ workForm.addEventListener('submit', e => {
 
 renderFeed();
 
+// ─── SETTINGS MODAL ───────────────────────────────────────
+const modalBackdrop   = document.getElementById('modalBackdrop');
+const settingsIconBtn = document.getElementById('settingsIconBtn');
+const smClose         = document.getElementById('smClose');
+const smTabs          = document.querySelectorAll('.sm-tab');
+const smPanes         = document.querySelectorAll('.sm-pane');
+
+function openModal()  { modalBackdrop.classList.remove('hidden'); }
+function closeModal() { modalBackdrop.classList.add('hidden'); }
+
+settingsIconBtn.addEventListener('click', openModal);
+smClose.addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', e => { if (e.target === modalBackdrop) closeModal(); });
+
+smTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        smTabs.forEach(t => t.classList.remove('active'));
+        smPanes.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('stab-' + tab.dataset.stab).classList.add('active');
+    });
+});
+
 // ─── TEACHER PIN ──────────────────────────────────────────
-const PIN          = '1234';
-const teacherBar   = document.getElementById('teacherBar');
-const pinMsg       = document.getElementById('pinMsg');
-const pinRow       = document.getElementById('pinRow');
-const pinInput     = document.getElementById('pinInput');
-const pinBtn       = document.getElementById('pinBtn');
-const lockBtn      = document.getElementById('lockBtn');
+const PIN      = '1234';
+const teacherBar = document.getElementById('teacherBar');
+const pinMsg   = document.getElementById('pinMsg');
+const pinRow   = document.getElementById('pinRow');
+const pinInput = document.getElementById('pinInput');
+const pinBtn   = document.getElementById('pinBtn');
+const lockBtn  = document.getElementById('lockBtn');
 
 let isTeacher = sessionStorage.getItem('den-teacher') === 'true';
 

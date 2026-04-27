@@ -248,32 +248,17 @@ input, textarea { font-family: inherit; }
     font-size: 1rem;
 }
 
-.themes {
-    display: flex;
-    gap: 4px;
+.settings-icon-btn {
     background: var(--surface2);
     border: 1px solid var(--border);
-    padding: 4px;
     border-radius: 10px;
+    width: 38px; height: 38px;
+    font-size: 1.2rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, transform .2s;
+    margin-left: auto;
 }
-
-.t-btn {
-    border: none;
-    background: none;
-    padding: 6px 12px;
-    border-radius: 7px;
-    font-size: .78rem;
-    font-weight: 600;
-    color: var(--muted);
-    transition: all .2s;
-    white-space: nowrap;
-}
-
-.t-btn.active {
-    background: var(--surface);
-    color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,.1);
-}
+.settings-icon-btn:hover { background: var(--border); transform: rotate(30deg); }
 
 /* ═══════════════════════════════════════════════
    PAGES / TABS
@@ -635,20 +620,90 @@ form textarea:focus {
 .ev.can:hover { background: #dc2626; cursor: pointer; }
 
 /* ═══════════════════════════════════════════════
-   SETTINGS
+   SETTINGS MODAL
 ═══════════════════════════════════════════════ */
-.settings-box {
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn .2s ease;
+}
+.modal-backdrop.hidden { display: none !important; }
+
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.settings-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    animation: slideUp .25s ease;
+    overflow: hidden;
+}
+
+@keyframes slideUp {
+    from { opacity:0; transform: translateY(24px); }
+    to   { opacity:1; transform: translateY(0); }
+}
+
+.sm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 0;
+}
+.sm-title { font-size: 1.05rem; font-weight: 800; }
+.sm-close {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    color: var(--text);
+    border-radius: 8px;
+    width: 30px; height: 30px;
+    font-size: .85rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
 }
-.settings-box h3 { font-size: 1rem; font-weight: 800; }
-.settings-box p { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+.sm-close:hover { background: var(--border); }
 
+/* Inner tabs */
+.sm-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 14px 22px 0;
+    border-bottom: 1px solid var(--border);
+}
+.sm-tab {
+    padding: 9px 18px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: .88rem;
+    font-weight: 700;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all .2s;
+}
+.sm-tab:hover { color: var(--text); }
+.sm-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* Panes */
+.sm-pane { display: none; padding: 22px; flex-direction: column; gap: 14px; }
+.sm-pane.active { display: flex; animation: fadeUp .25s ease; }
+.sm-pane h3 { font-size: .98rem; font-weight: 800; }
+.sm-pane > p { font-size: .83rem; color: var(--muted); line-height: 1.6; }
+
+/* PIN inputs inside modal */
 .pin-row {
     display: flex;
     gap: 10px;
@@ -659,27 +714,56 @@ form textarea:focus {
     padding: 10px 13px;
     border-radius: 9px;
     border: 1.5px solid var(--border);
-    background: var(--surface);
+    background: var(--surface2);
     color: var(--text);
     font-size: .9rem;
     outline: none;
     transition: border-color .2s;
 }
 .pin-row input:focus { border-color: var(--accent); }
+#pinMsg { font-size: .85rem; font-weight: 700; min-height: 18px; }
 
-#pinMsg { font-size: .85rem; font-weight: 700; min-height: 20px; }
-
-.hint {
-    font-size: .78rem;
-    color: var(--muted);
-}
+.hint { font-size: .76rem; color: var(--muted); }
 .hint code {
-    background: var(--surface);
+    background: var(--surface2);
     border: 1px solid var(--border);
     padding: 1px 5px;
     border-radius: 5px;
-    font-size: .78rem;
+    font-size: .76rem;
 }
+
+/* Style picker */
+.style-options {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+}
+.style-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 8px;
+    transition: border-color .2s, transform .2s;
+    cursor: pointer;
+}
+.style-opt:hover { transform: translateY(-2px); border-color: var(--accent); }
+.style-opt.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,123,57,.15); }
+
+.style-preview {
+    width: 48px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,.1);
+}
+.light-prev  { background: linear-gradient(135deg,#f7f0e6,#e07b39); }
+.dark-prev   { background: linear-gradient(135deg,#121010,#e07b39); }
+.modern-prev { background: linear-gradient(135deg,#0d0b1e,#8b5cf6); }
+
+.style-label { font-size: .8rem; font-weight: 700; }
+.style-desc  { font-size: .7rem; color: var(--muted); }
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE TWEAKS
@@ -688,5 +772,5 @@ form textarea:focus {
     .hero { padding: 36px 18px; }
     .hero h1 { font-size: 1.6rem; }
     .page { padding: 18px 14px; }
-    .themes { display: none; }
+    .style-options { grid-template-columns: 1fr 1fr; }
 }
