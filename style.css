@@ -619,6 +619,32 @@ form textarea:focus {
 }
 .ev.can:hover { background: #dc2626; cursor: pointer; }
 
+/* Teacher clickable days */
+.cd.clickable-day { cursor: pointer; }
+.cd.clickable-day:hover {
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+.cd.selected {
+    background: color-mix(in srgb, var(--accent) 18%, var(--surface)) !important;
+    outline: 2px solid var(--accent) !important;
+    outline-offset: -2px;
+}
+.cd.selected .dn {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+}
+/* Weekend cells — greyed out */
+.cd.weekend {
+    background: var(--surface2);
+    opacity: .55;
+    cursor: not-allowed;
+}
+
 /* ═══════════════════════════════════════════════
    SETTINGS FULL SCREEN
 ═══════════════════════════════════════════════ */

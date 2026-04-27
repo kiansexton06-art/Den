@@ -203,6 +203,10 @@ function renderCal() {
         const isToday = today.getFullYear()===cy && today.getMonth()===cm && today.getDate()===d;
         if (isToday) el.classList.add('today');
 
+        const dayOfWeek = new Date(key + 'T12:00:00').getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        if (isWeekend) el.classList.add('weekend');
+
         let html = `<span class="dn">${d}</span>`;
         (evts[key] || []).forEach(ev => {
             html += `<div class="ev ${isTeacher ? 'can' : ''}" data-k="${key}" data-id="${ev.id}">
@@ -210,6 +214,24 @@ function renderCal() {
             </div>`;
         });
         el.innerHTML = html;
+
+        // Teacher: click cell to auto-fill date
+        if (isTeacher && !isWeekend) {
+            el.classList.add('clickable-day');
+            el.addEventListener('click', ev => {
+                // Only trigger if click is on the cell background (not on an event pill)
+                if (ev.target.closest('.ev')) return;
+                evtDate.value = key;
+                evtDate.style.borderColor = '';
+                // Highlight selected cell
+                calGrid.querySelectorAll('.cd.selected').forEach(c => c.classList.remove('selected'));
+                el.classList.add('selected');
+                // Scroll form into view and focus title
+                evtTitle.focus();
+                evtTitle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        }
+
         calGrid.appendChild(el);
     }
 
