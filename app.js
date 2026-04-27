@@ -1,6 +1,39 @@
 (() => {
 'use strict';
 
+// ─── FIREBASE INIT ─────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBi-PMbrCNrID4Sci2DYj7l6ewQaxIqJ4k",
+  authDomain: "ubgpro.firebaseapp.com",
+  projectId: "ubgpro",
+  storageBucket: "ubgpro.firebasestorage.app",
+  messagingSenderId: "915266692059",
+  appId: "1:915266692059:web:699879598f8d9ad96cbdfe"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ─── SITE ENTRY PIN ───────────────────────────────────────
+const SITE_PIN = 'den2024'; // The global PIN
+const siteEntryOverlay = document.getElementById('siteEntryOverlay');
+const sitePinInput = document.getElementById('sitePinInput');
+const sitePinBtn = document.getElementById('sitePinBtn');
+const sitePinMsg = document.getElementById('sitePinMsg');
+
+if (localStorage.getItem('den-unlocked') === 'true') {
+    siteEntryOverlay.classList.add('unlocked');
+} else {
+    sitePinBtn.addEventListener('click', () => {
+        if (sitePinInput.value === SITE_PIN) {
+            localStorage.setItem('den-unlocked', 'true');
+            siteEntryOverlay.classList.add('unlocked');
+        } else {
+            sitePinMsg.textContent = '❌ Incorrect PIN';
+        }
+    });
+    sitePinInput.addEventListener('keydown', e => { if (e.key === 'Enter') sitePinBtn.click(); });
+}
+
 // ─── THEME ───────────────────────────────────────────────
 const body = document.body;
 
@@ -53,7 +86,7 @@ const workInp  = document.getElementById('studentWork');
 const workFeed = document.getElementById('workFeed');
 const workMsg  = document.getElementById('workMsg');
 
-let works = JSON.parse(localStorage.getItem('den-works') || '[]');
+let works = [];
 
 function esc(s) {
     const d = document.createElement('div');
@@ -76,28 +109,49 @@ function renderFeed() {
         </div>`).join('');
 }
 
-workForm.addEventListener('submit', e => {
+// Global Sync for Works
+db.collection('den-works').orderBy('timestamp', 'desc').limit(50).onSnapshot(snap => {
+    works = [];
+    snap.forEach(doc => {
+        const data = doc.data();
+        works.push({ id: doc.id, name: data.name, content: data.content, date: data.date });
+    });
+    renderFeed();
+});
+
+workForm.addEventListener('submit', async e => {
     e.preventDefault();
     const name = nameInp.value.trim();
     const content = workInp.value.trim();
     if (!name || !content) return;
 
-    works.unshift({
-        id: Date.now(), name, content,
-        date: new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
-    });
-    if (works.length > 50) works.pop();
-    localStorage.setItem('den-works', JSON.stringify(works));
-    renderFeed();
-    workForm.reset();
+    const btn = workForm.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = '⏳ Posting...';
 
-    workMsg.textContent = '✅ Work posted!';
-    workMsg.className = 'msg ok';
-    workMsg.classList.remove('hidden');
-    setTimeout(() => workMsg.classList.add('hidden'), 3000);
+    try {
+        await db.collection('den-works').add({
+            name,
+            content,
+            date: new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }),
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        workForm.reset();
+        workMsg.textContent = '✅ Work posted globally!';
+        workMsg.className = 'msg ok';
+        workMsg.classList.remove('hidden');
+        setTimeout(() => workMsg.classList.add('hidden'), 3000);
+    } catch (err) {
+        console.error("Error posting work:", err);
+        workMsg.textContent = '❌ Failed to post.';
+        workMsg.className = 'msg err';
+        workMsg.classList.remove('hidden');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Post My Work';
+    }
 });
-
-renderFeed();
 
 // ─── SETTINGS SCREEN ───────────────────────────────────────
 const settingsScreen  = document.getElementById('settingsScreen');

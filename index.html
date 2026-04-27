@@ -11,6 +11,20 @@
 </head>
 <body class="light">
 
+<!-- ══ SITE ENTRY OVERLAY ══════════════════════════════════ -->
+<div class="site-entry-overlay" id="siteEntryOverlay">
+    <div class="entry-card">
+        <div class="entry-emoji">🏠</div>
+        <h2>Welcome to The Den</h2>
+        <p>Please enter the school PIN to access the site.</p>
+        <div class="pin-row" style="margin-top: 16px;">
+            <input type="password" id="sitePinInput" placeholder="Enter PIN…" maxlength="10">
+            <button class="btn-accent" id="sitePinBtn">Enter</button>
+        </div>
+        <div id="sitePinMsg" class="msg" style="margin-top: 10px; min-height: 20px;"></div>
+    </div>
+</div>
+
 <!-- Overlay for mobile sidebar -->
 <div class="overlay" id="overlay"></div>
 
@@ -219,6 +233,10 @@
         <p class="ev-popup-desc" id="evPopupDesc"></p>
     </div>
 </div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
 <script src="app.js"></script>
 </body>
