@@ -61,6 +61,86 @@
     --shadow-lg: 0 12px 40px rgba(139,92,246,.25);
 }
 
+.pink {
+    --bg:        #fdf2f8;
+    --surface:   #fce7f3;
+    --surface2:  #fbcfe8;
+    --border:    #f472b6;
+    --text:      #831843;
+    --muted:     #be185d;
+    --accent:    #db2777;
+    --acc-hover: #9d174d;
+    --sb-bg:     #831843;
+    --sb-txt:    #fdf2f8;
+    --sb-muted:  #f472b6;
+    --sb-active: #db2777;
+    --top-bg:    #fce7f3;
+    --hero-from: #db2777;
+    --hero-to:   #9d174d;
+    --shadow:    0 4px 20px rgba(219,39,119,.15);
+    --shadow-lg: 0 12px 40px rgba(219,39,119,.25);
+}
+
+.red {
+    --bg:        #1a0505;
+    --surface:   #2b0a0a;
+    --surface2:  #3b0e0e;
+    --border:    #7f1d1d;
+    --text:      #fef2f2;
+    --muted:     #fca5a5;
+    --accent:    #ef4444;
+    --acc-hover: #dc2626;
+    --sb-bg:     #110303;
+    --sb-txt:    #fef2f2;
+    --sb-muted:  #b91c1c;
+    --sb-active: #ef4444;
+    --top-bg:    #2b0a0a;
+    --hero-from: #dc2626;
+    --hero-to:   #991b1b;
+    --shadow:    0 4px 20px rgba(239,68,68,.15);
+    --shadow-lg: 0 12px 40px rgba(239,68,68,.25);
+}
+
+.minecraft {
+    --bg:        #74b04c;
+    --surface:   #8b5a2b;
+    --surface2:  #a0522d;
+    --border:    #5c3a21;
+    --text:      #ffffff;
+    --muted:     #d2b48c;
+    --accent:    #55ff55;
+    --acc-hover: #00aa00;
+    --sb-bg:     #5c3a21;
+    --sb-txt:    #ffffff;
+    --sb-muted:  #a0522d;
+    --sb-active: #55ff55;
+    --top-bg:    #8b5a2b;
+    --hero-from: #55ff55;
+    --hero-to:   #00aa00;
+    --shadow:    0 4px 20px rgba(0,0,0,.35);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,.5);
+}
+
+.roblox {
+    --bg:        #232527;
+    --surface:   #393b3d;
+    --surface2:  #4f5459;
+    --border:    #111214;
+    --text:      #ffffff;
+    --muted:     #b8b8b8;
+    --accent:    #d72828;
+    --acc-hover: #aa1111;
+    --sb-bg:     #111214;
+    --sb-txt:    #ffffff;
+    --sb-muted:  #656668;
+    --sb-active: #d72828;
+    --top-bg:    #393b3d;
+    --hero-from: #d72828;
+    --hero-to:   #aa1111;
+    --shadow:    0 4px 20px rgba(215,40,40,.2);
+    --shadow-lg: 0 12px 40px rgba(215,40,40,.3);
+}
+
 /* ═══════════════════════════════════════════════
    RESET & BASE
 ═══════════════════════════════════════════════ */
@@ -907,6 +987,10 @@ form textarea:focus {
 .light-prev  { background: linear-gradient(135deg,#f7f0e6,#e07b39); }
 .dark-prev   { background: linear-gradient(135deg,#121010,#e07b39); }
 .modern-prev { background: linear-gradient(135deg,#0d0b1e,#8b5cf6); }
+.pink-prev   { background: linear-gradient(135deg,#fdf2f8,#db2777); }
+.red-prev    { background: linear-gradient(135deg,#1a0505,#ef4444); }
+.mc-prev     { background: linear-gradient(135deg,#74b04c,#8b5a2b); }
+.rb-prev     { background: linear-gradient(135deg,#232527,#d72828); }
 
 .style-label { font-size: .82rem; font-weight: 700; }
 .style-desc  { font-size: .72rem; color: var(--muted); }
