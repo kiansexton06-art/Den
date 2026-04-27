@@ -187,7 +187,8 @@
                 <form id="addEvtForm">
                     <input type="date" id="evtDate" required>
                     <input type="text" id="evtTitle" placeholder="Event title…" required>
-                    <button type="submit" class="btn-accent small">+ Add</button>
+                    <textarea id="evtDesc" placeholder="Description (optional)…" rows="2"></textarea>
+                    <button type="submit" class="btn-accent small">+ Add Event</button>
                 </form>
             </div>
 
@@ -207,6 +208,16 @@
     </section>
 
 
+</div>
+
+<!-- Event Detail Popup -->
+<div class="ev-popup-backdrop hidden" id="evPopupBackdrop">
+    <div class="ev-popup">
+        <button class="ev-popup-close" id="evPopupClose">✕</button>
+        <div class="ev-popup-date" id="evPopupDate"></div>
+        <h2 class="ev-popup-title" id="evPopupTitle"></h2>
+        <p class="ev-popup-desc" id="evPopupDesc"></p>
+    </div>
 </div>
 
 <script src="app.js"></script>

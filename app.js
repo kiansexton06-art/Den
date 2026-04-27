@@ -172,6 +172,28 @@ const nextMo   = document.getElementById('nextMo');
 const addEvtForm = document.getElementById('addEvtForm');
 const evtDate  = document.getElementById('evtDate');
 const evtTitle = document.getElementById('evtTitle');
+const evtDesc  = document.getElementById('evtDesc');
+
+// ─── EVENT POPUP ──────────────────────────────────────────
+const evPopupBackdrop = document.getElementById('evPopupBackdrop');
+const evPopupClose    = document.getElementById('evPopupClose');
+const evPopupDate     = document.getElementById('evPopupDate');
+const evPopupTitle    = document.getElementById('evPopupTitle');
+const evPopupDesc     = document.getElementById('evPopupDesc');
+
+function showEvPopup(dateKey, ev) {
+    const d = new Date(dateKey + 'T12:00:00');
+    evPopupDate.textContent = d.toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    evPopupTitle.textContent = ev.title;
+    evPopupDesc.textContent = ev.desc || 'No description added.';
+    evPopupDesc.style.opacity = ev.desc ? '1' : '0.5';
+    evPopupBackdrop.classList.remove('hidden');
+}
+
+function closeEvPopup() { evPopupBackdrop.classList.add('hidden'); }
+evPopupClose.addEventListener('click', closeEvPopup);
+evPopupBackdrop.addEventListener('click', e => { if (e.target === evPopupBackdrop) closeEvPopup(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEvPopup(); });
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 let cy = new Date().getFullYear();
@@ -209,8 +231,8 @@ function renderCal() {
 
         let html = `<span class="dn">${d}</span>`;
         (evts[key] || []).forEach(ev => {
-            html += `<div class="ev ${isTeacher ? 'can' : ''}" data-k="${key}" data-id="${ev.id}">
-                <span>${esc(ev.title)}</span>${isTeacher ? '<span>✕</span>' : ''}
+            html += `<div class="ev ${isTeacher ? 'can' : 'viewable'}" data-k="${key}" data-id="${ev.id}">
+                <span>${esc(ev.title)}</span>${isTeacher ? '<span>✕</span>' : '<span class="ev-info">ℹ</span>'}
             </div>`;
         });
         el.innerHTML = html;
@@ -236,14 +258,27 @@ function renderCal() {
     }
 
     if (isTeacher) {
-        calGrid.querySelectorAll('.ev.can').forEach(el => {
-            el.addEventListener('click', () => {
-                const k = el.dataset.k;
-                const id = Number(el.dataset.id);
+        // Teacher: click event pill to DELETE
+        calGrid.querySelectorAll('.ev.can').forEach(pill => {
+            pill.addEventListener('click', e => {
+                e.stopPropagation();
+                const k = pill.dataset.k;
+                const id = Number(pill.dataset.id);
                 evts[k] = (evts[k] || []).filter(e => e.id !== id);
                 if (!evts[k].length) delete evts[k];
                 localStorage.setItem('den-events', JSON.stringify(evts));
                 renderCal();
+            });
+        });
+    } else {
+        // Student: click event pill to VIEW description
+        calGrid.querySelectorAll('.ev.viewable').forEach(pill => {
+            pill.addEventListener('click', e => {
+                e.stopPropagation();
+                const k = pill.dataset.k;
+                const id = Number(pill.dataset.id);
+                const ev = (evts[k] || []).find(e => e.id === id);
+                if (ev) showEvPopup(k, ev);
             });
         });
     }
@@ -278,9 +313,10 @@ addEvtForm.addEventListener('submit', e => {
     evtDate.style.borderColor = '';
 
     if (!evts[k]) evts[k] = [];
-    evts[k].push({ id: Date.now(), title });
+    evts[k].push({ id: Date.now(), title, desc: evtDesc ? evtDesc.value.trim() : '' });
     localStorage.setItem('den-events', JSON.stringify(evts));
     evtTitle.value = '';
+    if (evtDesc) evtDesc.value = '';
     const d = new Date(k + 'T12:00:00');
     cy = d.getFullYear(); cm = d.getMonth();
     renderCal();
