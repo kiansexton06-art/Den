@@ -1,282 +1,252 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Theme Management ---
-    const themeBtns = document.querySelectorAll('.theme-btn');
-    const body = document.body;
+(() => {
+'use strict';
 
-    const savedTheme = localStorage.getItem('den-theme') || 'theme-light';
-    setTheme(savedTheme);
+// ── Theme ─────────────────────────────────────────────────
+const html = document.documentElement;
+const themePills = document.querySelectorAll('.theme-pill');
 
-    themeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const theme = btn.getAttribute('data-theme');
-            setTheme(theme);
-            localStorage.setItem('den-theme', theme);
-        });
-    });
+function setTheme(t) {
+    html.setAttribute('data-theme', t);
+    localStorage.setItem('den-theme', t);
+    themePills.forEach(p => p.classList.toggle('active', p.dataset.theme === t));
+}
+setTheme(localStorage.getItem('den-theme') || 'light');
+themePills.forEach(p => p.addEventListener('click', () => setTheme(p.dataset.theme)));
 
-    function setTheme(themeName) {
-        body.classList.remove('theme-light', 'theme-dark', 'theme-modern');
-        body.classList.add(themeName);
+// ── Sidebar ───────────────────────────────────────────────
+const sidebar        = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const hamburgerBtn   = document.getElementById('hamburgerBtn');
+const sidebarCloseBtn= document.getElementById('sidebarCloseBtn');
 
-        themeBtns.forEach(btn => {
-            if(btn.getAttribute('data-theme') === themeName) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
+function openSidebar()  { sidebar.classList.add('open'); sidebarOverlay.classList.add('show'); }
+function closeSidebar() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('show'); }
+
+hamburgerBtn.addEventListener('click', openSidebar);
+sidebarCloseBtn.addEventListener('click', closeSidebar);
+sidebarOverlay.addEventListener('click', closeSidebar);
+
+// ── Tab Navigation ────────────────────────────────────────
+const navItems    = document.querySelectorAll('.nav-item');
+const tabPanels   = document.querySelectorAll('.tab-panel');
+const topbarTitle = document.getElementById('topbarTitle');
+const tabTitles   = { about: 'About Us', report: 'Report Work', calendar: 'Calendar', settings: 'Settings' };
+
+function showTab(id) {
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === id));
+    tabPanels.forEach(p => p.classList.toggle('active', p.id === `tab-${id}`));
+    topbarTitle.textContent = tabTitles[id] || '';
+    if (window.innerWidth < 1024) closeSidebar();
+}
+
+navItems.forEach(n => n.addEventListener('click', () => showTab(n.dataset.tab)));
+
+// ── Work Feed ─────────────────────────────────────────────
+const workForm    = document.getElementById('workForm');
+const nameInput   = document.getElementById('studentName');
+const workInput   = document.getElementById('studentWork');
+const workFeed    = document.getElementById('workFeed');
+const submitBtn   = document.getElementById('submitWorkBtn');
+const feedbackEl  = document.getElementById('workFeedback');
+
+let works = JSON.parse(localStorage.getItem('den-works') || '[]');
+
+function escapeHTML(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function renderFeed() {
+    if (!works.length) {
+        workFeed.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-inbox"></i>
+            <p>Nothing shared yet — be the first!</p>
+          </div>`;
+        return;
     }
+    workFeed.innerHTML = works.map(w => `
+      <div class="work-card">
+        <div class="work-card-top">
+          <span class="work-name"><i class="fa-solid fa-circle-user"></i> ${escapeHTML(w.name)}</span>
+          <span class="work-date">${w.date}</span>
+        </div>
+        <p class="work-body">${escapeHTML(w.content)}</p>
+      </div>`).join('');
+}
 
-    // --- Sidebar & Navigation ---
-    const sidebar = document.getElementById('sidebar');
-    const openSidebarBtn = document.getElementById('openSidebarBtn');
-    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-    const mainContent = document.getElementById('mainContent');
-    const navBtns = document.querySelectorAll('.nav-btn');
-    const tabPanes = document.querySelectorAll('.tab-pane');
+function showFeedback(msg, type) {
+    feedbackEl.textContent = msg;
+    feedbackEl.className = `form-feedback ${type}`;
+    feedbackEl.classList.remove('hidden');
+    setTimeout(() => feedbackEl.classList.add('hidden'), 3000);
+}
 
-    openSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        sidebar.classList.toggle('open');
-        mainContent.classList.toggle('expanded');
+workForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    const content = workInput.value.trim();
+    if (!name || !content) return;
+
+    works.unshift({
+        id: Date.now(),
+        name,
+        content,
+        date: new Date().toLocaleString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
     });
-
-    closeSidebarBtn.addEventListener('click', () => {
-        sidebar.classList.add('collapsed');
-        sidebar.classList.remove('open');
-        mainContent.classList.add('expanded');
-    });
-
-    navBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active btn
-            navBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Show target tab
-            const target = btn.getAttribute('data-target');
-            tabPanes.forEach(pane => {
-                if (pane.id === target) {
-                    pane.classList.add('active');
-                } else {
-                    pane.classList.remove('active');
-                }
-            });
-
-            // On mobile, close sidebar after clicking
-            if (window.innerWidth < 992) {
-                sidebar.classList.remove('open');
-            }
-        });
-    });
-
-    // --- Work Feed Management ---
-    const workForm = document.getElementById('workForm');
-    const studentNameInput = document.getElementById('studentName');
-    const studentWorkInput = document.getElementById('studentWork');
-    const workFeed = document.getElementById('workFeed');
-
-    let savedWorks = JSON.parse(localStorage.getItem('den-works')) || [];
+    if (works.length > 50) works.pop();
+    localStorage.setItem('den-works', JSON.stringify(works));
     renderFeed();
+    workForm.reset();
+    showFeedback('✓ Work posted successfully!', 'success');
+});
 
-    workForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = studentNameInput.value.trim();
-        const work = studentWorkInput.value.trim();
+renderFeed();
 
-        if (name && work) {
-            const newWork = {
-                id: Date.now(),
-                name: name,
-                content: work,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' })
-            };
-            savedWorks.unshift(newWork);
-            if (savedWorks.length > 50) savedWorks.pop(); // keep last 50
-            localStorage.setItem('den-works', JSON.stringify(savedWorks));
-            renderFeed();
-            workForm.reset();
-        }
-    });
+// ── Teacher PIN ───────────────────────────────────────────
+const TEACHER_PIN      = '1234';
+const teacherPanel     = document.getElementById('teacherPanel');
+const pinStatusMsg     = document.getElementById('pinStatusMsg');
+const pinInputRow      = document.getElementById('pinInputRow');
+const teacherPinInput  = document.getElementById('teacherPin');
+const submitPinBtn     = document.getElementById('submitPinBtn');
+const logoutTeacherBtn = document.getElementById('logoutTeacherBtn');
 
-    function renderFeed() {
-        workFeed.innerHTML = '';
-        if (savedWorks.length === 0) {
-            workFeed.innerHTML = '<div class="empty-state">No work has been shared yet. Be the first!</div>';
-            return;
-        }
-        savedWorks.forEach(work => {
-            const workEl = document.createElement('div');
-            workEl.className = 'work-item';
-            workEl.innerHTML = `
-                <div class="work-item-header">
-                    <span class="work-item-name">${escapeHTML(work.name)}</span>
-                    <span class="work-item-date">${work.date}</span>
-                </div>
-                <div class="work-item-content">${escapeHTML(work.content)}</div>
-            `;
-            workFeed.appendChild(workEl);
+let isTeacher = sessionStorage.getItem('den-teacher') === 'true';
+
+function applyTeacherMode() {
+    if (isTeacher) {
+        pinInputRow.classList.add('hidden');
+        logoutTeacherBtn.classList.remove('hidden');
+        teacherPanel.classList.remove('hidden');
+        pinStatusMsg.innerHTML = '<span style="color:#27ae60"><i class="fa-solid fa-lock-open"></i> Teacher Mode Active</span>';
+    } else {
+        pinInputRow.classList.remove('hidden');
+        logoutTeacherBtn.classList.add('hidden');
+        teacherPanel.classList.add('hidden');
+        pinStatusMsg.innerHTML = '';
+        teacherPinInput.value = '';
+    }
+    renderCalendar();
+}
+
+submitPinBtn.addEventListener('click', () => {
+    if (teacherPinInput.value === TEACHER_PIN) {
+        isTeacher = true;
+        sessionStorage.setItem('den-teacher', 'true');
+        applyTeacherMode();
+    } else {
+        pinStatusMsg.innerHTML = '<span style="color:#e74c3c"><i class="fa-solid fa-circle-xmark"></i> Incorrect PIN. Try again.</span>';
+    }
+});
+
+teacherPinInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitPinBtn.click(); });
+
+logoutTeacherBtn.addEventListener('click', () => {
+    isTeacher = false;
+    sessionStorage.removeItem('den-teacher');
+    applyTeacherMode();
+});
+
+// ── Calendar ──────────────────────────────────────────────
+const calGrid      = document.getElementById('calGrid');
+const calMonthLbl  = document.getElementById('calMonthLabel');
+const prevMonthBtn = document.getElementById('prevMonth');
+const nextMonthBtn = document.getElementById('nextMonth');
+const addEventForm = document.getElementById('addEventForm');
+const eventDateInp = document.getElementById('eventDate');
+const eventTitleInp= document.getElementById('eventTitle');
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+let calYear  = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let events   = JSON.parse(localStorage.getItem('den-events') || '{}');
+
+function renderCalendar() {
+    // Remove day cells (keep the 7 header cells)
+    const heads = Array.from(calGrid.querySelectorAll('.cal-head'));
+    calGrid.innerHTML = '';
+    heads.forEach(h => calGrid.appendChild(h));
+
+    calMonthLbl.textContent = `${MONTHS[calMonth]} ${calYear}`;
+
+    const today     = new Date();
+    const firstDay  = new Date(calYear, calMonth, 1).getDay();
+    const daysInMon = new Date(calYear, calMonth + 1, 0).getDate();
+
+    // Blank leading cells
+    for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day empty';
+        calGrid.appendChild(el);
+    }
+
+    // Day cells
+    for (let d = 1; d <= daysInMon; d++) {
+        const el  = document.createElement('div');
+        el.className = 'cal-day';
+        const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === d;
+        if (isToday) el.classList.add('today');
+
+        const dateKey = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayEvs  = events[dateKey] || [];
+
+        let html = `<span class="day-num">${d}</span>`;
+        dayEvs.forEach(ev => {
+            html += `<div class="event-pill ${isTeacher ? 'deleteable' : ''}" data-key="${dateKey}" data-id="${ev.id}">
+                <span>${escapeHTML(ev.title)}</span>
+                ${isTeacher ? '<i class="fa-solid fa-xmark" style="font-size:.7rem"></i>' : ''}
+            </div>`;
+        });
+        el.innerHTML = html;
+        calGrid.appendChild(el);
+    }
+
+    // Delete listeners
+    if (isTeacher) {
+        calGrid.querySelectorAll('.event-pill.deleteable').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const key = pill.dataset.key;
+                const id  = Number(pill.dataset.id);
+                events[key] = (events[key] || []).filter(ev => ev.id !== id);
+                if (!events[key].length) delete events[key];
+                localStorage.setItem('den-events', JSON.stringify(events));
+                renderCalendar();
+            });
         });
     }
+}
 
-    function escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-
-    // --- Teacher PIN & Authentication ---
-    const TEACHER_PIN = '1234'; 
-    let isTeacher = sessionStorage.getItem('den-isTeacher') === 'true';
-
-    const teacherPinInput = document.getElementById('teacherPin');
-    const submitPinBtn = document.getElementById('submitPinBtn');
-    const logoutTeacherBtn = document.getElementById('logoutTeacherBtn');
-    const pinInputGroup = document.getElementById('pinInputGroup');
-    const pinStatus = document.getElementById('pinStatus');
-    const teacherCalendarControls = document.getElementById('teacherCalendarControls');
-
-    function updateTeacherUI() {
-        if (isTeacher) {
-            pinInputGroup.classList.add('hidden');
-            logoutTeacherBtn.classList.remove('hidden');
-            pinStatus.innerHTML = '<span style="color: #2ecc71;">✓ Unlocked. You have Teacher access.</span>';
-            teacherCalendarControls.classList.remove('hidden');
-        } else {
-            pinInputGroup.classList.remove('hidden');
-            logoutTeacherBtn.classList.add('hidden');
-            pinStatus.innerHTML = '';
-            teacherCalendarControls.classList.add('hidden');
-            teacherPinInput.value = '';
-        }
-        renderCalendar(); // Re-render to show/hide event delete buttons
-    }
-
-    submitPinBtn.addEventListener('click', () => {
-        if (teacherPinInput.value === TEACHER_PIN) {
-            isTeacher = true;
-            sessionStorage.setItem('den-isTeacher', 'true');
-            updateTeacherUI();
-        } else {
-            pinStatus.innerHTML = '<span style="color: #e74c3c;">✗ Incorrect PIN.</span>';
-        }
-    });
-
-    logoutTeacherBtn.addEventListener('click', () => {
-        isTeacher = false;
-        sessionStorage.removeItem('den-isTeacher');
-        updateTeacherUI();
-    });
-
-    updateTeacherUI();
-
-    // --- Calendar Management ---
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-    const calendarDays = document.getElementById('calendarDays');
-    const currentMonthYear = document.getElementById('currentMonthYear');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
-    
-    // Format: { '2023-10-15': [{id: 1, title: 'Math Test'}] }
-    let calendarEvents = JSON.parse(localStorage.getItem('den-events')) || {};
-
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    function renderCalendar() {
-        calendarDays.innerHTML = '';
-        currentMonthYear.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-
-        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-        // Empty cells for days before the 1st
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'calendar-day empty';
-            calendarDays.appendChild(emptyDiv);
-        }
-
-        // Real days
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-day';
-            
-            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            
-            let html = `<span class="day-number">${i}</span><div class="events-container">`;
-            
-            if (calendarEvents[dateStr]) {
-                calendarEvents[dateStr].forEach(ev => {
-                    html += `<div class="event-label ${isTeacher ? 'deleteable' : ''}" data-date="${dateStr}" data-id="${ev.id}">
-                        <span>${escapeHTML(ev.title)}</span>
-                        ${isTeacher ? '<span>&times;</span>' : ''}
-                    </div>`;
-                });
-            }
-            
-            html += `</div>`;
-            dayDiv.innerHTML = html;
-            calendarDays.appendChild(dayDiv);
-        }
-
-        // Add event listeners to delete buttons if teacher
-        if (isTeacher) {
-            document.querySelectorAll('.event-label.deleteable').forEach(el => {
-                el.addEventListener('click', function() {
-                    if(confirm('Delete this event?')) {
-                        const date = this.getAttribute('data-date');
-                        const id = Number(this.getAttribute('data-id'));
-                        calendarEvents[date] = calendarEvents[date].filter(ev => ev.id !== id);
-                        if (calendarEvents[date].length === 0) delete calendarEvents[date];
-                        localStorage.setItem('den-events', JSON.stringify(calendarEvents));
-                        renderCalendar();
-                    }
-                });
-            });
-        }
-    }
-
-    prevMonthBtn.addEventListener('click', () => {
-        currentMonth--;
-        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-        renderCalendar();
-    });
-
-    nextMonthBtn.addEventListener('click', () => {
-        currentMonth++;
-        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-        renderCalendar();
-    });
-
-    // Add Event
-    const addEventForm = document.getElementById('addEventForm');
-    const eventDateInput = document.getElementById('eventDate');
-    const eventTitleInput = document.getElementById('eventTitle');
-
-    addEventForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const date = eventDateInput.value;
-        const title = eventTitleInput.value.trim();
-
-        if (date && title && isTeacher) {
-            if (!calendarEvents[date]) {
-                calendarEvents[date] = [];
-            }
-            calendarEvents[date].push({ id: Date.now(), title: title });
-            localStorage.setItem('den-events', JSON.stringify(calendarEvents));
-            
-            // Re-render if added in currently viewed month
-            const eventMonth = new Date(date).getMonth();
-            const eventYear = new Date(date).getFullYear();
-            if (eventMonth === currentMonth && eventYear === currentYear) {
-                renderCalendar();
-            }
-            
-            eventTitleInput.value = '';
-        }
-    });
-
-    // Initial render
+prevMonthBtn.addEventListener('click', () => {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
     renderCalendar();
 });
+nextMonthBtn.addEventListener('click', () => {
+    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+});
+
+addEventForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!isTeacher) return;
+    const key   = eventDateInp.value;
+    const title = eventTitleInp.value.trim();
+    if (!key || !title) return;
+    if (!events[key]) events[key] = [];
+    events[key].push({ id: Date.now(), title });
+    localStorage.setItem('den-events', JSON.stringify(events));
+    eventTitleInp.value = '';
+    // Jump to the month of the added event
+    const d = new Date(key + 'T12:00:00');
+    calYear = d.getFullYear();
+    calMonth = d.getMonth();
+    renderCalendar();
+});
+
+// ── Init ──────────────────────────────────────────────────
+applyTeacherMode();
+renderCalendar();
+
+})();
